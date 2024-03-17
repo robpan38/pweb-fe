@@ -1,4 +1,4 @@
-const mockData = [
+export const mockData = [
     {
         "id": 1,
         "name": "1997 Washed Nylon Twill Tailored Jacket",
@@ -44,14 +44,18 @@ const getClothingGarmentMaterials = (clothingGarment) => clothingGarment.materia
         return acc + ";" + curr.name;
     }
 }, "");
-const getClothingGarmentCollection = (clothingGarment) => clothingGarment.collection.name;
+const getClothingGarmentCollection = (clothingGarment) => {
+    if (clothingGarment.collection !== null) {
+        return clothingGarment.collection.name;
+    }
+};
 
 export const clothingGarmentFormConfig = {
     fields: [
         {
             "fieldName": "name",
             "type": "string",
-            "get": getClothingGarmentSimpleProperty
+            "get": getClothingGarmentSimpleProperty("name")
         },
         {
             "fieldName": "materials",
@@ -62,17 +66,17 @@ export const clothingGarmentFormConfig = {
         {
             "fieldName": "price",
             "type": "number",
-            "get": getClothingGarmentSimpleProperty
+            "get": getClothingGarmentSimpleProperty("price")
         },
         {
             "fieldName": "stock",
             "type": "number",
-            "get": getClothingGarmentSimpleProperty
+            "get": getClothingGarmentSimpleProperty("stock")
         },
         {
             "fieldName": "year",
             "type": "number",
-            "get": getClothingGarmentSimpleProperty
+            "get": getClothingGarmentSimpleProperty("year")
         },
         {
             "fieldName": "collection",
@@ -85,4 +89,13 @@ export const clothingGarmentFormConfig = {
 export const fetchClothingGarment = async () => {
     // real fetching logic when backend is in place
     return Promise.resolve(mockData);
+}
+
+export const addClothingGarment = (oldData, newElement) => {
+    // real adding logic when backend is in place
+    return new Promise((resolve, reject) => setTimeout(() => {
+        console.log("log zabalos");
+        resolve([...oldData, newElement]);
+    }, 3000));
+
 }

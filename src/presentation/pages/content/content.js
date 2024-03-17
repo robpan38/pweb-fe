@@ -1,23 +1,38 @@
 import { Paper } from "@mui/material";
 import { NavBar } from "../../components/NavBar";
 import { WithDataFetchTable } from "../../components/WithDataFetchTable";
-import { clothingGarmentFormConfig, fetchClothingGarment } from "../../../services/ClothingGarmentService";
-import { useEffect } from "react";
+import { addClothingGarment, clothingGarmentFormConfig, fetchClothingGarment } from "../../../services/ClothingGarmentService";
+import { useEffect, useState } from "react";
+import { addCollection, collectionsFormConfig, fetchCollection } from "../../../services/CollectionsService";
 
 export function Content() {
-    // useEffect(() => {
-    //     const designer = new DesignerDTO(1, "Helmut Lang");
-    //     const material = new MaterialDto(1, "nylon", "producer1");
-    //     const collection = new CollectionDTO(1, "AW 2007", designer, "AW", 2007);
-    //     const clothingGarment = new ClothingGarment(1, "1997 Washed Nylon Twill Tailored Jacket", [material], 285.0, 1, 1997, collection);
-    //     console.log(clothingGarment);
-    // }, [])
+    const [page, setPage] = useState("Clothing garments");
 
     return (
         <>
-            <NavBar></NavBar>
+            <NavBar setPageCallback={setPage}></NavBar>
             <Paper sx={{ width: 0.7, "margin-left": "auto", "margin-right": "auto", "margin-top": "5%" }}>
-                <WithDataFetchTable fetchData={fetchClothingGarment} formConfig={clothingGarmentFormConfig} type="clothing" />
+                {
+                    page === "Clothing garments" ? (
+                        <WithDataFetchTable addData={addClothingGarment}
+                            fetchData={fetchClothingGarment}
+                            formConfig={clothingGarmentFormConfig}
+                            title="Clothing garments" type="clothing"
+                            addDataTitle="Add clothing garment"
+                            updateDataTitle="Update clothing garment" />
+                    ) : (
+                        page === "Collections" ? (
+                            <WithDataFetchTable addData={addCollection}
+                                fetchData={fetchCollection}
+                                formConfig={collectionsFormConfig}
+                                title="Collections" type="collection"
+                                addDataTitle="Add collection"
+                                updateDataTitle="Update collection" />
+                        ) : (
+                            <></>
+                        )
+                    )
+                }
             </Paper>
         </>
     );

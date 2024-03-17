@@ -13,10 +13,11 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages = ['Clothing garments', 'Collections', 'Brand'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-export function NavBar() {
+export function NavBar(props) {
+    const { setPageCallback } = props;
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
     const handleOpenUserMenu = (event) => {
@@ -52,6 +53,7 @@ export function NavBar() {
                             <Button
                                 key={page}
                                 sx={{ my: 2, color: 'white', display: 'block' }}
+                                onClick={() => setPageCallback(page)}
                             >
                                 {page}
                             </Button>

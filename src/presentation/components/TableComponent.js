@@ -19,38 +19,12 @@ import Tooltip from '@mui/material/Tooltip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { visuallyHidden } from '@mui/utils';
 import { Modal } from '@mui/material';
 import { EntityForm } from './EntityForm';
-
-function createData(id, name, calories, fat, carbs, protein) {
-    return {
-        id,
-        name,
-        calories,
-        fat,
-        carbs,
-        protein,
-    };
-}
-
-const rows = [
-    createData(1, 'Cupcake', 305, 3.7, 67, 4.3),
-    createData(2, 'Donut', 452, 25.0, 51, 4.9),
-    createData(3, 'Eclair', 262, 16.0, 24, 6.0),
-    createData(4, 'Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData(5, 'Gingerbread', 356, 16.0, 49, 3.9),
-    createData(6, 'Honeycomb', 408, 3.2, 87, 6.5),
-    createData(7, 'Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData(8, 'Jelly Bean', 375, 0.0, 94, 0.0),
-    createData(9, 'KitKat', 518, 26.0, 65, 7.0),
-    createData(10, 'Lollipop', 392, 0.2, 98, 0.0),
-    createData(11, 'Marshmallow', 318, 0, 81, 2.0),
-    createData(12, 'Nougat', 360, 19.0, 9, 37.0),
-    createData(13, 'Oreo', 437, 18.0, 63, 4.0),
-];
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -132,7 +106,34 @@ EnhancedTableHead.propTypes = {
 };
 
 function EnhancedTableToolbar(props) {
-    const { numSelected, setOpenAddModalStatus } = props;
+    const { numSelected, setOpenAddModalStatus, title, setOpenUpdateModalStatus } = props;
+
+    const renderSelectedButtons = () => {
+        if (numSelected > 0 && numSelected === 1) {
+            return (
+                <>
+                    <Tooltip title="Edit">
+                        <IconButton onClick={() => setOpenUpdateModalStatus()}>
+                            <EditIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                        <IconButton>
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip>
+                </>
+            );
+        } else if (numSelected > 0) {
+            return (
+                <Tooltip title="Delete">
+                    <IconButton>
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
+            );
+        }
+    }
 
     return (
         <Toolbar
@@ -161,23 +162,19 @@ function EnhancedTableToolbar(props) {
                     id="tableTitle"
                     component="div"
                 >
-                    Nutrition
+                    {title}
                 </Typography>
             )}
 
             {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                    <IconButton>
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
+                renderSelectedButtons()
             ) : (
                 <>
                     <Tooltip title="Add to list">
                         <IconButton onClick={() => setOpenAddModalStatus()}>
                             <AddOutlinedIcon />
                         </IconButton>
-                    </Tooltip>
+                    </Tooltip >
 
                     <Tooltip title="Filter list">
                         <IconButton>
@@ -185,8 +182,9 @@ function EnhancedTableToolbar(props) {
                         </IconButton>
                     </Tooltip>
                 </>
-            )}
-        </Toolbar>
+            )
+            }
+        </Toolbar >
     );
 }
 
@@ -195,7 +193,7 @@ EnhancedTableToolbar.propTypes = {
 };
 
 export default function EnhancedTable(props) {
-    const { rows, headCells, formConfig } = props;
+    const { title, rows, headCells, formConfig, addDataCallback, updateDataCallback, addDataTitle, updateDataTitle } = props;
     const [order, setOrder] = React.useState('asc');
     // TODO change default orderBy
     const [orderBy, setOrderBy] = React.useState('calories');
@@ -207,6 +205,11 @@ export default function EnhancedTable(props) {
     const [addModalState, setAddModalState] = React.useState(false);
     const onCloseAddModal = () => setAddModalState(false);
     const onOpenAddModal = () => setAddModalState(true);
+
+    // update modal state
+    const [updateModalState, setUpdateModalState] = React.useState(false);
+    const onCloseUpdateModal = () => setUpdateModalState(false);
+    const onOpenUpdateModal = () => setUpdateModalState(true);
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -265,10 +268,11 @@ export default function EnhancedTable(props) {
         return (
             <>
                 {
-                    headCells.map((headCell) => {
+                    headCells.map((headCell, index) => {
                         const labelId = `enhanced-table-checkbox-${index}`;
                         if (headCell.id === "name") {
                             return <TableCell
+                                key={headCell.id}
                                 component="th"
                                 id={labelId}
                                 scope="row"
@@ -290,12 +294,32 @@ export default function EnhancedTable(props) {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
+                {/* add modal */}
                 <Modal open={addModalState} onClose={onCloseAddModal}>
                     <Paper sx={{ width: "25%", margin: '5% auto' }}>
-                        <EntityForm formConfig={formConfig} add={true}></EntityForm>
+                        <EntityForm formConfig={formConfig} add={true} addDataCallback={addDataCallback} closeModalCallback={onCloseAddModal}
+                            addDataTitle={addDataTitle}
+                            updateDataTitle={updateDataTitle}
+                        ></EntityForm>
                     </Paper>
                 </Modal>
-                <EnhancedTableToolbar numSelected={selected.length} setOpenAddModalStatus={onOpenAddModal} />
+                {/* update modal */}
+                <Modal open={updateModalState} onClose={onCloseUpdateModal}>
+                    <Paper sx={{ width: "25%", margin: '5% auto' }}>
+                        <EntityForm formConfig={formConfig} add={false} addDataCallback={updateDataCallback}
+                            closeModalCallback={onCloseUpdateModal}
+                            selectedItem={selected.length > 0 ? rows.find(row => row.id === selected[0]) : null}
+                            addDataTitle={addDataTitle}
+                            updateDataTitle={updateDataTitle}
+                        >
+                        </EntityForm>
+                    </Paper>
+                </Modal>
+                <EnhancedTableToolbar title={title}
+                    numSelected={selected.length}
+                    setOpenAddModalStatus={onOpenAddModal}
+                    setOpenUpdateModalStatus={onOpenUpdateModal}
+                />
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
