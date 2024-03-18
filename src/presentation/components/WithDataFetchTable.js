@@ -19,6 +19,10 @@ export const WithDataFetchTable = (props) => {
         console.log(updatedItem);
     }
 
+    const handleFilterCallback = async (filterNameValue) => {
+        console.log(filterNameValue);
+    }
+
     const setFetchedDataAndHeadCells = (rows) => {
         if (type === "clothing") {
             const headCells = [
@@ -99,5 +103,6 @@ export const WithDataFetchTable = (props) => {
     return <EnhancedTable {...props} rows={rows} headCells={headCells}
         addDataCallback={addDataCallback}
         updateDataCallback={updateDataCallback}
+        handleFilterCallback={handleFilterCallback}
     />
 };

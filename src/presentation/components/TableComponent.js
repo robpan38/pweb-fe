@@ -16,14 +16,11 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import { visuallyHidden } from '@mui/utils';
-import { Modal } from '@mui/material';
+import { Modal, TextField, debounce } from '@mui/material';
 import { EntityForm } from './EntityForm';
 
 function descendingComparator(a, b, orderBy) {
@@ -106,7 +103,9 @@ EnhancedTableHead.propTypes = {
 };
 
 function EnhancedTableToolbar(props) {
-    const { numSelected, setOpenAddModalStatus, title, setOpenUpdateModalStatus } = props;
+    const { numSelected, setOpenAddModalStatus, title, setOpenUpdateModalStatus, handleFilterCallback } = props;
+    const [showFilter, setShowFilter] = React.useState(false);
+    const handleShowFilter = () => setShowFilter(!showFilter);
 
     const renderSelectedButtons = () => {
         if (numSelected > 0 && numSelected === 1) {
@@ -176,8 +175,13 @@ function EnhancedTableToolbar(props) {
                         </IconButton>
                     </Tooltip >
 
-                    <Tooltip title="Filter list">
-                        <IconButton>
+                    <Tooltip title="Filter list" placement="top">
+                        <TextField sx={{
+                            position: "absolute", top: "55px", opacity: 1, background: "white", width: "20ch",
+                            visibility: showFilter ? "visible" : "hidden", zIndex: 3
+                        }} label="Name" onChange={(event) => handleFilterCallback(event.target.value)}>
+                        </TextField>
+                        <IconButton onClick={handleShowFilter}>
                             <FilterListIcon />
                         </IconButton>
                     </Tooltip>
@@ -193,7 +197,7 @@ EnhancedTableToolbar.propTypes = {
 };
 
 export default function EnhancedTable(props) {
-    const { title, rows, headCells, formConfig, addDataCallback, updateDataCallback, addDataTitle, updateDataTitle } = props;
+    const { title, rows, headCells, formConfig, addDataCallback, updateDataCallback, addDataTitle, updateDataTitle, handleFilterCallback } = props;
     const [order, setOrder] = React.useState('asc');
     // TODO change default orderBy
     const [orderBy, setOrderBy] = React.useState('calories');
@@ -274,14 +278,14 @@ export default function EnhancedTable(props) {
                             return <TableCell
                                 key={headCell.id}
                                 component="th"
-                                id={labelId}
+                                key={labelId}
                                 scope="row"
                                 padding="none"
                             >
                                 {row[headCell.id]}
                             </TableCell>
                         } else {
-                            return <TableCell align="right">{
+                            return <TableCell key={labelId} align="right">{
                                 typeof row[headCell.id] === "object" ? JSON.stringify(row[headCell.id]) : row[headCell.id]
                             }</TableCell>
                         }
@@ -319,6 +323,7 @@ export default function EnhancedTable(props) {
                     numSelected={selected.length}
                     setOpenAddModalStatus={onOpenAddModal}
                     setOpenUpdateModalStatus={onOpenUpdateModal}
+                    handleFilterCallback={handleFilterCallback}
                 />
                 <TableContainer>
                     <Table
