@@ -107,6 +107,22 @@ function EnhancedTableToolbar(props) {
     const [showFilter, setShowFilter] = React.useState(false);
     const handleShowFilter = () => setShowFilter(!showFilter);
 
+    const [filterValue, setFilterValue] = React.useState("");
+
+    const handleFilterValueChange = (newFilterValue) => {
+        setFilterValue(newFilterValue);
+    }
+
+    React.useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            handleFilterCallback(filterValue);
+        }, 500);
+
+        return () => {
+            clearTimeout(timeoutId);
+        }
+    }, [filterValue]);
+
     const renderSelectedButtons = () => {
         if (numSelected > 0 && numSelected === 1) {
             return (
@@ -179,7 +195,7 @@ function EnhancedTableToolbar(props) {
                         <TextField sx={{
                             position: "absolute", top: "55px", opacity: 1, background: "white", width: "20ch",
                             visibility: showFilter ? "visible" : "hidden", zIndex: 3
-                        }} label="Name" onChange={(event) => handleFilterCallback(event.target.value)}>
+                        }} label="Name" onChange={(event) => handleFilterValueChange(event.target.value)}>
                         </TextField>
                         <IconButton onClick={handleShowFilter}>
                             <FilterListIcon />

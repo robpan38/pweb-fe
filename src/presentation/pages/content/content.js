@@ -4,6 +4,7 @@ import { WithDataFetchTable } from "../../components/WithDataFetchTable";
 import { addClothingGarment, clothingGarmentFormConfig, fetchClothingGarment } from "../../../services/ClothingGarmentService";
 import { useEffect, useState } from "react";
 import { addCollection, collectionsFormConfig, fetchCollection } from "../../../services/CollectionsService";
+import { Post } from "../../components/Post";
 
 export function Content() {
     const [page, setPage] = useState("Clothing garments");
@@ -11,7 +12,7 @@ export function Content() {
     return (
         <>
             <NavBar setPageCallback={setPage}></NavBar>
-            <Paper sx={{ width: 0.7, "margin-left": "auto", "margin-right": "auto", "margin-top": "5%" }}>
+            <Paper sx={{ width: 0.7, "margin-left": "auto", "margin-right": "auto", "margin-top": "5%", "margin-bottom": "5%" }}>
                 {
                     page === "Clothing garments" ? (
                         <WithDataFetchTable addData={addClothingGarment}
@@ -29,7 +30,7 @@ export function Content() {
                                 addDataTitle="Add collection"
                                 updateDataTitle="Update collection" />
                         ) : (
-                            <></>
+                            <Post></Post>
                         )
                     )
                 }

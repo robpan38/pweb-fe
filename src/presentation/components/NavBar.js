@@ -13,7 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 
-const pages = ['Clothing garments', 'Collections', 'Brand'];
+const pages = ['History', 'Clothing garments', 'Collections'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 export function NavBar(props) {
@@ -29,7 +29,7 @@ export function NavBar(props) {
     };
 
     return (
-        <AppBar position="static" sx={{ backgroundColor: "black" }}>
+        <AppBar position="sticky" sx={{ backgroundColor: "black" }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
