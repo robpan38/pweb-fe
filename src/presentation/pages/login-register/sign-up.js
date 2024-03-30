@@ -1,12 +1,27 @@
 import { Grid, Box, TextField, Typography, Button } from "@mui/material";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useOutletContext } from "react-router-dom";
 
 export function SignUp() {
+    const [logInCallback] = useOutletContext();
     const [isSignup, setIsSignup] = useState(false);
+
+    const nameTextFieldRef = useRef('');
+    const emailTextFieldRef = useRef('');
+    const passTextFieldRef = useRef('');
 
     const toggleSignup = () => {
         setIsSignup((prevSignup) => !prevSignup);
     };
+
+    const onSubmitCallback = (event) => {
+        event.preventDefault();
+        let login = true;
+        if (nameTextFieldRef.current.value !== undefined) {
+            login = false;
+        }
+        logInCallback(nameTextFieldRef?.current?.value, emailTextFieldRef?.current?.value, passTextFieldRef?.current?.value, login);
+    }
 
     return (
         <Grid container spacing={0} sx={{ width: 1, height: 1 }}>
@@ -26,12 +41,13 @@ export function SignUp() {
             </Grid>
             <Grid item sx={{ width: 0.5, height: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 component={Box}>
-                <form onSubmit={() => { console.log("swag") }} style={{ width: "80%", display: "flex", flexDirection: "column", alignItems: "center" }} >
+                <form onSubmit={onSubmitCallback} style={{ width: "80%", display: "flex", flexDirection: "column", alignItems: "center" }} >
                     {isSignup && (
                         <TextField
                             label="Name"
                             margin="normal"
                             required
+                            inputRef={nameTextFieldRef}
                             sx={{ width: 0.9 }}
                         />
                     )}
@@ -39,6 +55,7 @@ export function SignUp() {
                         label="Email"
                         margin="normal"
                         required
+                        inputRef={emailTextFieldRef}
                         type="email"
                         sx={{ width: 0.9 }}
                     />
@@ -46,6 +63,7 @@ export function SignUp() {
                         label="Password"
                         margin="normal"
                         required
+                        inputRef={passTextFieldRef}
                         type="password"
                         sx={{ width: 0.9 }}
                     />

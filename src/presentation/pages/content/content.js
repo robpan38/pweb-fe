@@ -5,13 +5,15 @@ import { addClothingGarment, clothingGarmentFormConfig, fetchClothingGarment } f
 import { useEffect, useState } from "react";
 import { addCollection, collectionsFormConfig, fetchCollection } from "../../../services/CollectionsService";
 import { Post } from "../../components/Post";
+import { useOutletContext } from "react-router-dom";
 
 export function Content() {
     const [page, setPage] = useState("Clothing garments");
+    const [logInCallback, logOutCallback] = useOutletContext();
 
     return (
         <>
-            <NavBar setPageCallback={setPage}></NavBar>
+            <NavBar setPageCallback={setPage} logOutCallback={logOutCallback} ></NavBar>
             <Paper sx={{ width: 0.7, "margin-left": "auto", "margin-right": "auto", "margin-top": "5%", "margin-bottom": "5%" }}>
                 {
                     page === "Clothing garments" ? (
