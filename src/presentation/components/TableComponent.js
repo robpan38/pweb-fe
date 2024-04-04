@@ -341,7 +341,7 @@ export default function EnhancedTable(props) {
                     setOpenUpdateModalStatus={onOpenUpdateModal}
                     handleFilterCallback={handleFilterCallback}
                 />
-                <TableContainer>
+                <TableContainer sx={{ height: "400px" }}>
                     <Table
                         sx={{ minWidth: 750 }}
                         aria-labelledby="tableTitle"

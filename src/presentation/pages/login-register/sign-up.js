@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
 export function SignUp() {
-    const [logInCallback] = useOutletContext();
+    const [role, logInCallback, logOutCallback] = useOutletContext();
     const [isSignup, setIsSignup] = useState(false);
 
     const nameTextFieldRef = useRef('');

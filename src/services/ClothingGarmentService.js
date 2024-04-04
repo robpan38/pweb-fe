@@ -1,3 +1,6 @@
+import axios from "axios";
+
+const BASE_URL = "http://localhost:8080/api/v1/clothingGarment";
 export const mockData = [
     {
         "id": 1,
@@ -87,8 +90,9 @@ export const clothingGarmentFormConfig = {
 };
 
 export const fetchClothingGarment = async () => {
-    // real fetching logic when backend is in place
-    return Promise.resolve(mockData);
+    return axios.get(BASE_URL)
+        .then(response => response.data)
+        .catch(console.log);
 }
 
 export const addClothingGarment = (oldData, newElement) => {

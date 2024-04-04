@@ -9,7 +9,7 @@ import { useOutletContext } from "react-router-dom";
 
 export function Content() {
     const [page, setPage] = useState("Clothing garments");
-    const [logInCallback, logOutCallback] = useOutletContext();
+    const [role, logInCallback, logOutCallback] = useOutletContext();
 
     return (
         <>
