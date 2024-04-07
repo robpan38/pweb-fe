@@ -1,9 +1,9 @@
 import { Paper } from "@mui/material";
 import { NavBar } from "../../components/NavBar";
 import { WithDataFetchTable } from "../../components/WithDataFetchTable";
-import { addClothingGarment, clothingGarmentFormConfig, fetchClothingGarment } from "../../../services/ClothingGarmentService";
+import { addClothingGarment, clothingGarmentFormConfig, deleteClothingGarment, fetchClothingGarment, updateClothingGarment } from "../../../services/ClothingGarmentService";
 import { useEffect, useState } from "react";
-import { addCollection, collectionsFormConfig, fetchCollection } from "../../../services/CollectionsService";
+import { addCollection, collectionsFormConfig, deleteCollection, fetchCollection, updateCollection } from "../../../services/CollectionsService";
 import { Post } from "../../components/Post";
 import { useOutletContext } from "react-router-dom";
 
@@ -19,7 +19,10 @@ export function Content() {
                     page === "Clothing garments" ? (
                         <WithDataFetchTable addData={addClothingGarment}
                             fetchData={fetchClothingGarment}
+                            updateData={updateClothingGarment}
+                            deleteData={deleteClothingGarment}
                             formConfig={clothingGarmentFormConfig}
+                            role={role}
                             title="Clothing garments" type="clothing"
                             addDataTitle="Add clothing garment"
                             updateDataTitle="Update clothing garment" />
@@ -27,7 +30,10 @@ export function Content() {
                         page === "Collections" ? (
                             <WithDataFetchTable addData={addCollection}
                                 fetchData={fetchCollection}
+                                updateData={updateCollection}
+                                deleteData={deleteCollection}
                                 formConfig={collectionsFormConfig}
+                                role={role}
                                 title="Collections" type="collection"
                                 addDataTitle="Add collection"
                                 updateDataTitle="Update collection" />

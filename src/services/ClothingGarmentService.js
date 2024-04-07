@@ -89,17 +89,38 @@ export const clothingGarmentFormConfig = {
     ]
 };
 
-export const fetchClothingGarment = async () => {
-    return axios.get(BASE_URL)
+export const fetchClothingGarment = async (name) => {
+    return axios.get(
+        name !== undefined ? BASE_URL + `?name=${name}` : BASE_URL
+    )
         .then(response => response.data)
         .catch(console.log);
 }
 
-export const addClothingGarment = (oldData, newElement) => {
-    // real adding logic when backend is in place
-    return new Promise((resolve, reject) => setTimeout(() => {
-        console.log("log zabalos");
-        resolve([...oldData, newElement]);
-    }, 3000));
+const convertToDto = (item) => {
+    return {
+        id: item?.id,
+        name: item?.name,
+        materialsNames: typeof item?.materials === "string"
+            ? item?.materials.split(";").map(material => material.trim())
+            : item?.materials.map(material => material.name),
+        price: item?.price,
+        stock: item?.stock,
+        year: item?.year,
+        collectionName: typeof item?.collection === "string"
+            ? item?.collection
+            : item?.collection?.name
+    }
+}
 
+export const addClothingGarment = async (newItem) => {
+    return axios.post(BASE_URL, convertToDto(newItem));
+}
+
+export const updateClothingGarment = async (updatedItem) => {
+    return axios.post(BASE_URL + "/update", convertToDto(updatedItem));
+}
+
+export const deleteClothingGarment = async (ids) => {
+    return axios.delete(BASE_URL, { data: ids });
 }

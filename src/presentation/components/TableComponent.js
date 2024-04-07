@@ -103,7 +103,7 @@ EnhancedTableHead.propTypes = {
 };
 
 function EnhancedTableToolbar(props) {
-    const { numSelected, setOpenAddModalStatus, title, setOpenUpdateModalStatus, handleFilterCallback } = props;
+    const { numSelected, setOpenAddModalStatus, title, setOpenUpdateModalStatus, handleFilterCallback, handleDeleteCallback, role } = props;
     const [showFilter, setShowFilter] = React.useState(false);
     const handleShowFilter = () => setShowFilter(!showFilter);
 
@@ -132,20 +132,26 @@ function EnhancedTableToolbar(props) {
                             <EditIcon />
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title="Delete">
-                        <IconButton>
-                            <DeleteIcon />
-                        </IconButton>
-                    </Tooltip>
+                    {
+                        role === "ADMIN" ?
+                            <Tooltip title="Delete">
+                                <IconButton onClick={handleDeleteCallback}>
+                                    <DeleteIcon />
+                                </IconButton>
+                            </Tooltip>
+                            : <></>
+                    }
                 </>
             );
         } else if (numSelected > 0) {
             return (
-                <Tooltip title="Delete">
-                    <IconButton>
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
+                role === "ADMIN" ?
+                    <Tooltip title="Delete">
+                        <IconButton onClick={handleDeleteCallback}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip>
+                    : <></>
             );
         }
     }
@@ -213,7 +219,7 @@ EnhancedTableToolbar.propTypes = {
 };
 
 export default function EnhancedTable(props) {
-    const { title, rows, headCells, formConfig, addDataCallback, updateDataCallback, addDataTitle, updateDataTitle, handleFilterCallback } = props;
+    const { title, rows, headCells, formConfig, addDataCallback, updateDataCallback, addDataTitle, updateDataTitle, handleFilterCallback, handleDeleteCallback, role } = props;
     const [order, setOrder] = React.useState('asc');
     // TODO change default orderBy
     const [orderBy, setOrderBy] = React.useState('calories');
@@ -236,6 +242,11 @@ export default function EnhancedTable(props) {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
+
+    const _handleDeleteCallback = () => {
+        handleDeleteCallback(selected);
+        setSelected([]);
+    }
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -340,6 +351,8 @@ export default function EnhancedTable(props) {
                     setOpenAddModalStatus={onOpenAddModal}
                     setOpenUpdateModalStatus={onOpenUpdateModal}
                     handleFilterCallback={handleFilterCallback}
+                    handleDeleteCallback={_handleDeleteCallback}
+                    role={role}
                 />
                 <TableContainer sx={{ height: "400px" }}>
                     <Table

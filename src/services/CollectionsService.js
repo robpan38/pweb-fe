@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export const mockData = [
     {
         "id": 1,
@@ -55,16 +57,37 @@ export const collectionsFormConfig = {
     ]
 };
 
-export const fetchCollection = async () => {
-    // real fetching logic when backend is in place
-    return Promise.resolve(mockData);
+const BASE_URL = "http://localhost:8080/api/v1/collection";
+
+export const fetchCollection = async (name) => {
+    return axios.get(
+        name !== undefined ? BASE_URL + `?name=${name}` : BASE_URL
+    )
+        .then(response => response.data)
+        .catch(console.log);
 }
 
-export const addCollection = (oldData, newElement) => {
-    // real adding logic when backend is in place
-    return new Promise((resolve, reject) => setTimeout(() => {
-        console.log("log zabalos");
-        resolve([...oldData, newElement]);
-    }, 3000));
+const convertToDto = (item) => {
+    return {
+        id: item?.id,
+        name: item?.name,
+        designerName:
+            typeof item?.designer === "string"
+                ? item?.designer
+                : item?.designer?.name,
+        season: item?.season,
+        year: item?.year
+    };
+}
 
+export const addCollection = (newItem) => {
+    return axios.post(BASE_URL, convertToDto(newItem));
+}
+
+export const updateCollection = async (updatedItem) => {
+    return axios.post(BASE_URL + "/update", convertToDto(updatedItem));
+}
+
+export const deleteCollection = async (ids) => {
+    return axios.delete(BASE_URL, { data: ids });
 }

@@ -1,26 +1,87 @@
 import { useEffect, useState } from "react";
 import EnhancedTable from "./TableComponent";
-import { mockData } from "../../services/ClothingGarmentService";
+import { Alert } from "@mui/material";
 
 export const WithDataFetchTable = (props) => {
-    const { addData, fetchData, type } = props;
+    const { addData, fetchData, updateData, deleteData, type } = props;
     const [rows, setRows] = useState([]);
     const [headCells, setHeadCells] = useState([]);
+    const [showAlert, setShowAlert] = useState(null);
 
     const addDataCallback = async (newItem) => {
-        // console.log("am primit", newItem);
-        const randomObject = mockData[Math.floor((Math.random() * mockData.length))];
-        // we don't use the new Item
-        const result = await addData(rows, randomObject);
-        setFetchedDataAndHeadCells(result);
+        await addData(newItem)
+            .then(response => {
+                fetchData().then(setFetchedDataAndHeadCells);
+
+                setShowAlert({
+                    text: "Item was successfully added!",
+                    severity: "success"
+                });
+                setTimeout(() => {
+                    setShowAlert(null);
+                }, 3000);
+            })
+            .catch(error => {
+                setShowAlert({
+                    text: `${error}`,
+                    severity: "error"
+                });
+                setTimeout(() => {
+                    setShowAlert(null);
+                }, 3000);
+            });
     }
 
     const updateDataCallback = async (updatedItem) => {
-        console.log(updatedItem);
+        await updateData(updatedItem)
+            .then(response => {
+                fetchData().then(setFetchedDataAndHeadCells);
+
+                setShowAlert({
+                    text: "Item was successfully updated!",
+                    severity: "success"
+                });
+                setTimeout(() => {
+                    setShowAlert(null);
+                }, 3000);
+            })
+            .catch(error => {
+                setShowAlert({
+                    text: `${error}`,
+                    severity: "error"
+                });
+                setTimeout(() => {
+                    setShowAlert(null);
+                }, 3000);
+            });
     }
 
     const handleFilterCallback = async (filterNameValue) => {
-        console.log(filterNameValue);
+        fetchData(filterNameValue).then(setFetchedDataAndHeadCells);
+    }
+
+    const handleDeleteCallback = async (ids) => {
+        await deleteData(ids)
+            .then(response => {
+                fetchData().then(setFetchedDataAndHeadCells);
+
+                setShowAlert({
+                    text: "Item(s) successfully deleted!",
+                    severity: "success"
+                });
+                setTimeout(() => {
+                    setShowAlert(null);
+                }, 3000);
+            })
+            .catch(error => {
+                setShowAlert({
+                    text: `${error}`,
+                    severity: "error"
+                });
+                setTimeout(() => {
+                    setShowAlert(null);
+                }, 3000);
+            });
     }
 
     const setFetchedDataAndHeadCells = (rows) => {
@@ -75,13 +136,13 @@ export const WithDataFetchTable = (props) => {
                 {
                     id: "designer",
                     numeric: true,
-                    disablePadding: true,
+                    disablePadding: false,
                     label: "Designer"
                 },
                 {
                     id: "season",
                     numeric: true,
-                    disablePadding: true,
+                    disablePadding: false,
                     label: "Season"
                 },
                 {
@@ -100,9 +161,24 @@ export const WithDataFetchTable = (props) => {
         fetchData().then(setFetchedDataAndHeadCells);
     }, [fetchData]);
 
-    return <EnhancedTable {...props} rows={rows} headCells={headCells}
-        addDataCallback={addDataCallback}
-        updateDataCallback={updateDataCallback}
-        handleFilterCallback={handleFilterCallback}
-    />
+    const generateAlert = (text, severity) => {
+        return (
+            <Alert sx={{ position: "absolute", zIndex: 1101, top: "15%", left: "50%", transform: "translate(-50%, -50%)" }} severity={severity}>
+                {text}
+            </Alert>
+        );
+    }
+
+    return (<>
+        {
+            showAlert === null ? <></>
+                : generateAlert(showAlert.text, showAlert.severity)
+        }
+        <EnhancedTable {...props} rows={rows} headCells={headCells}
+            addDataCallback={addDataCallback}
+            updateDataCallback={updateDataCallback}
+            handleFilterCallback={handleFilterCallback}
+            handleDeleteCallback={handleDeleteCallback}
+        />
+    </>)
 };
